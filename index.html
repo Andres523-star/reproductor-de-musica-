@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Lavanda · Lista Doble</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="logo"><span class="logo-punto"></span><span>Lavanda</span></div>
+        <nav class="sidebar-nav">
+          <button id="nav-home" class="sidebar-item activo" type="button">
+            <svg viewBox="0 0 24 24"><path d="M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3z" fill="currentColor"/></svg>
+            <span>Home</span>
+          </button>
+        </nav>
+        <div class="sidebar-seccion">
+          <div class="sidebar-seccion-titulo">Playlists</div>
+          <button id="btn-crear-playlist" class="sidebar-item sidebar-crear" type="button">
+            <svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z" fill="currentColor"/></svg>
+            <span>Crear playlist</span>
+          </button>
+          <ul id="sidebar-playlists" class="sidebar-playlists"></ul>
+        </div>
+      </aside>
+
+      <div class="contenido">
+        <header class="topbar">
+          <div class="buscador-wrap">
+            <label class="buscador">
+              <svg viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 015.9 12.1l4.3 4.3-1.4 1.4-4.3-4.3A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z" fill="currentColor"/></svg>
+              <input id="input-buscar" type="search" placeholder="Buscar canciones reales (Apple Music) o en tu catálogo" autocomplete="off" />
+            </label>
+            <div id="resultados" class="resultados" hidden></div>
+          </div>
+          <button id="btn-abrir-agregar" class="btn-agregar" type="button">
+            <svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z" fill="currentColor"/></svg>
+            <span>Agregar</span>
+          </button>
+        </header>
+
+        <main id="vista-home" class="vista activa">
+          <section class="seccion">
+            <div class="seccion-cab"><h2>Artistas</h2></div>
+            <div id="carrusel-artistas" class="carrusel artistas"></div>
+          </section>
+          <section class="seccion">
+            <div class="seccion-cab"><h2>Álbumes</h2></div>
+            <div id="carrusel-albumes" class="carrusel albumes"></div>
+          </section>
+          <section class="seccion">
+            <div class="seccion-cab"><h2>Canciones</h2><small id="contador-home" class="suave"></small></div>
+            <ul id="lista-catalogo" class="canciones"></ul>
+          </section>
+        </main>
+
+        <main id="vista-playlist" class="vista">
+          <section class="seccion">
+            <div class="seccion-cab">
+              <h2 id="titulo-playlist-activa">Mi playlist</h2>
+              <small id="contador" class="suave"></small>
+            </div>
+            <div id="toolbar-seleccion" class="toolbar-seleccion" hidden>
+              <span id="contador-seleccion" class="toolbar-texto"></span>
+              <button id="btn-eliminar-seleccion" class="btn-peligro-suave" type="button">Eliminar</button>
+              <button id="btn-cancelar-seleccion" class="btn-suave" type="button">Cancelar</button>
+            </div>
+            <ul id="lista" class="canciones"></ul>
+            <p id="vacio" class="vacio">Esta playlist está vacía. Ve a Home o usa el buscador para agregar canciones.</p>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="picker-playlist" class="picker-playlist" hidden></div>
+    <audio id="audio-player" preload="metadata"></audio>
+
+    <footer id="mini" class="mini">
+      <div class="mini-progreso"><div id="mini-fill" class="mini-fill"></div></div>
+      <button id="mini-info" class="mini-info" type="button">
+        <div id="mini-cover" class="cover"></div>
+        <div class="textos">
+          <strong id="mini-titulo">Nada sonando</strong>
+          <small id="mini-artista">—</small>
+        </div>
+      </button>
+      <div class="mini-controles">
+        <button id="mini-prev" class="ctrl" type="button"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zM20 6v12L9.5 12z" fill="currentColor"/></svg></button>
+        <button id="mini-play" class="ctrl ctrl-play" type="button"></button>
+        <button id="mini-next" class="ctrl" type="button"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM4 6l10.5 6L4 18z" fill="currentColor"/></svg></button>
+      </div>
+      <div class="mini-relleno"></div>
+    </footer>
+
+    <section id="np" class="np" aria-hidden="true">
+      <div class="np-fondo"></div>
+      <div class="np-velo"></div>
+      <button id="np-cerrar" class="np-cerrar" type="button"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="np-contenido">
+        <div class="np-izq">
+          <div id="np-cover" class="cover np-cover"></div>
+          <div class="np-meta"><h2 id="np-titulo">—</h2><p id="np-artista">—</p></div>
+          <div class="np-progreso">
+            <div class="barra"><div id="np-fill" class="barra-fill"></div></div>
+            <div class="tiempos"><span id="np-t-actual">0:00</span><span id="np-t-total">0:00</span></div>
+          </div>
+          <div class="np-controles">
+            <button id="np-prev" class="ctrl ctrl-lg" type="button"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zM20 6v12L9.5 12z" fill="currentColor"/></svg></button>
+            <button id="np-play" class="ctrl ctrl-play ctrl-xl" type="button"></button>
+            <button id="np-next" class="ctrl ctrl-lg" type="button"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM4 6l10.5 6L4 18z" fill="currentColor"/></svg></button>
+          </div>
+        </div>
+        <div class="np-der">
+          <span class="etiqueta">Letra</span>
+          <div id="np-letras" class="letras"></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="modal-agregar" class="overlay" aria-hidden="true">
+      <div class="dialogo">
+        <div class="dialogo-cab">
+          <h3>Agregar canción</h3>
+          <button id="btn-cerrar-agregar" class="ctrl" type="button"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+        </div>
+        <form id="form-cancion" autocomplete="off">
+          <label>Título<input id="input-titulo" type="text" required maxlength="60" placeholder="Nombre de la canción" /></label>
+          <label>Artista<input id="input-artista" type="text" required maxlength="60" placeholder="Nombre del artista" /></label>
+          <label>¿A qué playlist?<select id="select-playlist"></select></label>
+          <label>¿Dónde agregarla?
+            <select id="select-modo">
+              <option value="final">Al final</option>
+              <option value="inicio">Al inicio</option>
+              <option value="posicion">En una posición específica</option>
+            </select>
+          </label>
+          <label id="grupo-posicion" hidden>Posición (1 = primera)<input id="input-posicion" type="number" min="1" value="1" /></label>
+          <p id="mensaje" class="mensaje"></p>
+          <button type="submit" class="btn-acento">Agregar</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="modal-playlist" class="overlay" aria-hidden="true">
+      <div class="dialogo">
+        <div class="dialogo-cab">
+          <h3>Nueva playlist</h3>
+          <button id="btn-cerrar-playlist" class="ctrl" type="button"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+        </div>
+        <form id="form-playlist" autocomplete="off">
+          <label>Nombre<input id="input-nombre-playlist" type="text" required maxlength="40" placeholder="Ej. Mi música favorita" /></label>
+          <p id="mensaje-playlist" class="mensaje"></p>
+          <button type="submit" class="btn-acento">Crear playlist</button>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
